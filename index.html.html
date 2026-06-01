@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nekko | Arquitectura Vertical Premium para Gatos</title>
+  <meta name="description" content="Diseña arquitecturas verticales para tu gato con Nekko. Sistema premium de módulos sostenibles.">
+  <style>
+    :root {
+      --cream: #F9F7F4;
+      --ink: #1A1814;
+      --green-deep: #1B3A2E;
+      --green-soft: #D4E8E1;
+      --accent: #C9A876;
+      --terra: #C8602A;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--cream); color: var(--ink); }
+    a { color: inherit; text-decoration: none; }
+    button { border: none; cursor: pointer; font-family: inherit; }
+    h1, h2 { font-family: Georgia, serif; font-weight: 700; }
+
+    .urgency-bar { background: var(--terra); color: white; text-align: center; padding: 0.8rem; font-size: 0.9rem; font-weight: 600; position: sticky; top: 0; z-index: 300; }
+    
+    header { position: sticky; top: 40px; z-index: 200; background: rgba(249, 247, 244, 0.98); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(27, 58, 46, 0.1); padding: 1.2rem 5%; }
+    nav { display: flex; justify-content: space-between; align-items: center; max-width: 1280px; margin: 0 auto; }
+    .logo { font-family: Georgia, serif; font-size: 1.8rem; font-weight: 900; letter-spacing: -0.02em; }
+    .nav-links { display: flex; gap: 2rem; font-size: 0.9rem; }
+    .nav-links a { cursor: pointer; transition: color 0.3s; }
+    .nav-links a:hover { color: var(--green-deep); }
+    .btn-cart { background: var(--ink); color: white; padding: 0.6rem 1.5rem; font-weight: 600; }
+
+    section { display: block; }
+    .container { max-width: 1280px; margin: 0 auto; padding: 0 5%; }
+    .section-label { font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--green-deep); margin-bottom: 1rem; font-weight: 700; }
+
+    /* HERO */
+    #hero { padding: 8rem 5% 6rem; background: linear-gradient(135deg, var(--cream) 0%, var(--green-soft) 100%); }
+    .hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+    .hero-content h1 { font-size: clamp(2.5rem, 8vw, 4rem); line-height: 1.05; margin-bottom: 1.5rem; }
+    .hero-content p { font-size: 0.95rem; color: #555; margin-bottom: 2.5rem; line-height: 1.8; }
+    .hero-cta { display: flex; gap: 1.5rem; margin-bottom: 2rem; }
+    .btn-primary { background: var(--green-deep); color: white; padding: 1rem 2.5rem; font-weight: 700; cursor: pointer; transition: all 0.3s; }
+    .btn-primary:hover { background: var(--ink); transform: translateY(-3px); }
+    .btn-secondary { background: transparent; border: 2px solid var(--ink); color: var(--ink); padding: 0.9rem 2.2rem; font-weight: 600; cursor: pointer; }
+    .btn-secondary:hover { border-color: var(--green-deep); color: var(--green-deep); }
+    .hero-visual { width: 100%; aspect-ratio: 1; overflow: hidden; border: 1px solid #E0D5CA; }
+    .hero-visual img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* DESIGN TOOL */
+    #design-tool { padding: 6rem 5%; background: white; }
+    .design-wrapper { display: grid; grid-template-columns: 1.5fr 1fr; gap: 3rem; margin-top: 3rem; }
+    .canvas-premium { position: relative; aspect-ratio: 1.2; background: linear-gradient(180deg, #E8DFD0 0%, #F5F3F0 50%, #E8DFD0 100%); border: 1px solid #D4B896; overflow: hidden; }
+    #designCanvas { width: 100%; height: 100%; display: block; }
+    .controls { display: flex; flex-direction: column; gap: 2rem; }
+    .modules-list { display: flex; flex-direction: column; gap: 0.8rem; }
+    .modules-title { font-weight: 700; text-transform: uppercase; font-size: 0.9rem; margin-bottom: 0.5rem; }
+    .module-drag { display: flex; gap: 1rem; align-items: center; padding: 1rem; background: white; border: 1px solid #E0D5CA; cursor: grab; transition: all 0.3s; user-select: none; }
+    .module-drag:hover { border-color: var(--green-deep); background: var(--green-soft); transform: translateX(4px); }
+    .module-thumb { width: 45px; height: 45px; background: var(--cream); border: 1px solid #E0D5CA; display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; }
+    .module-thumb img { max-width: 85%; max-height: 85%; object-fit: contain; }
+    .module-info { flex: 1; }
+    .module-name { font-weight: 600; font-size: 0.95rem; }
+    .module-price { font-size: 0.8rem; color: var(--green-deep); font-weight: 700; }
+    .summary { background: white; padding: 1.5rem; border: 1px solid #E0D5CA; display: flex; flex-direction: column; gap: 1.5rem; }
+    .summary-title { font-weight: 700; text-transform: uppercase; font-size: 0.9rem; }
+    .summary-items { display: flex; flex-direction: column; gap: 0.6rem; min-height: 80px; max-height: 200px; overflow-y: auto; }
+    .summary-empty { color: #999; font-style: italic; text-align: center; padding: 2rem 1rem; }
+    .summary-item { display: flex; justify-content: space-between; padding: 0.6rem; background: var(--cream); border-left: 3px solid var(--green-deep); font-size: 0.9rem; }
+    .summary-total { display: flex; justify-content: space-between; padding-top: 1rem; border-top: 1px solid #E0D5CA; font-weight: 700; }
+    .buttons { display: flex; flex-direction: column; gap: 0.8rem; }
+    .btn-save, .btn-clear, .btn-buy { padding: 0.85rem; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 0.3s; text-align: center; }
+    .btn-save { background: var(--green-deep); color: white; }
+    .btn-clear { background: transparent; color: var(--ink); border: 1px solid #E0D5CA; }
+    .btn-buy { background: var(--accent); color: var(--ink); font-weight: 700; }
+
+    /* PRODUCT MODAL */
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; overflow-y: auto; }
+    .modal-overlay.open { display: flex; align-items: flex-start; justify-content: center; padding: 2rem 1rem; }
+    .modal { background: var(--cream); max-width: 1000px; width: 100%; margin: auto; position: relative; }
+    .modal-close { position: absolute; top: 1.5rem; right: 1.5rem; font-size: 1.5rem; background: none; color: var(--ink); z-index: 10; line-height: 1; }
+    .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+    .modal-gallery { background: white; padding: 2rem; display: flex; flex-direction: column; gap: 1rem; }
+    .modal-main-img { width: 100%; aspect-ratio: 1; object-fit: contain; background: white; }
+    .modal-thumbs { display: flex; gap: 0.8rem; }
+    .modal-thumb { width: 70px; height: 70px; object-fit: contain; background: white; border: 2px solid transparent; cursor: pointer; transition: border-color 0.2s; }
+    .modal-thumb.active, .modal-thumb:hover { border-color: var(--green-deep); }
+    .modal-info { padding: 2.5rem; display: flex; flex-direction: column; gap: 1.5rem; overflow-y: auto; }
+    .modal-label { font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--green-deep); font-weight: 700; }
+    .modal-title { font-family: Georgia, serif; font-size: 1.8rem; font-weight: 700; line-height: 1.2; }
+    .modal-rating { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: #666; }
+    .modal-price { font-family: Georgia, serif; font-size: 2rem; font-weight: 700; color: var(--green-deep); }
+    .modal-desc { font-size: 0.95rem; color: #555; line-height: 1.8; }
+    .modal-features { display: flex; flex-direction: column; gap: 0.6rem; }
+    .modal-feature { display: flex; gap: 0.8rem; font-size: 0.9rem; color: #555; }
+    .modal-feature::before { content: '✓'; color: var(--green-deep); font-weight: 700; flex-shrink: 0; }
+    .modal-specs { background: white; padding: 1.2rem; border: 1px solid #E0D5CA; }
+    .modal-specs-title { font-weight: 700; font-size: 0.9rem; text-transform: uppercase; margin-bottom: 0.8rem; }
+    .modal-spec-row { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #F0E8E0; font-size: 0.9rem; }
+    .modal-spec-row:last-child { border-bottom: none; }
+    .modal-trust { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+    .modal-trust-item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; font-weight: 600; color: #666; }
+    .btn-modal-buy { background: var(--green-deep); color: white; padding: 1.1rem; font-weight: 700; font-size: 1rem; width: 100%; transition: all 0.3s; }
+    .btn-modal-buy:hover { background: var(--ink); }
+    .modal-combina { padding: 2rem; background: white; border-top: 1px solid #E0D5CA; }
+    .modal-combina-title { font-weight: 700; margin-bottom: 1rem; font-size: 0.9rem; text-transform: uppercase; }
+    .modal-combina-grid { display: flex; gap: 1rem; overflow-x: auto; }
+    .modal-combina-item { flex-shrink: 0; width: 100px; text-align: center; cursor: pointer; }
+    .modal-combina-item img { width: 80px; height: 80px; object-fit: contain; background: var(--cream); border: 1px solid #E0D5CA; margin-bottom: 0.4rem; }
+    .modal-combina-item span { font-size: 0.8rem; display: block; font-weight: 600; }
+    .modal-combina-item em { font-size: 0.75rem; color: var(--green-deep); font-style: normal; font-weight: 700; }
+    @media (max-width: 768px) { .modal-grid { grid-template-columns: 1fr; } }
+    #collection { padding: 6rem 5%; background: white; }
+    .collection-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem; margin-top: 3rem; }
+    .product-card { position: relative; background: white; border: 1px solid #E0D5CA; overflow: hidden; transition: all 0.3s; display: flex; flex-direction: column; cursor: pointer; }
+    .product-card:hover { border-color: var(--green-deep); box-shadow: 0 20px 50px rgba(27, 58, 46, 0.12); transform: translateY(-8px); }
+    .product-badge { position: absolute; top: 12px; left: 12px; background: var(--accent); color: var(--ink); padding: 0.4rem 0.8rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; z-index: 10; }
+    .product-image { position: relative; width: 100%; aspect-ratio: 1; background: white; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid #E0D5CA; overflow: hidden; }
+    .product-image::after { content: 'Ver producto →'; position: absolute; bottom: 0; left: 0; right: 0; background: rgba(27,58,46,0.88); color: white; text-align: center; padding: 0.7rem; font-size: 0.85rem; font-weight: 600; opacity: 0; transition: opacity 0.3s; }
+    .product-card:hover .product-image::after { opacity: 1; }
+    .product-image img { max-width: 85%; max-height: 85%; object-fit: contain; }
+    .product-content { padding: 1.5rem; flex: 1; display: flex; flex-direction: column; }
+    .product-name { font-weight: 700; margin-bottom: 0.8rem; font-size: 1rem; }
+    .product-rating { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; font-size: 0.9rem; }
+    .stars { color: var(--accent); }
+    .product-price { font-family: Georgia, serif; font-size: 1.3rem; font-weight: 700; color: var(--green-deep); margin-bottom: 1rem; }
+    .btn-add-product { background: var(--ink); color: white; padding: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+    .btn-add-product:hover { background: var(--green-deep); }
+
+    /* BLOG */
+    #blog { padding: 6rem 5%; background: var(--cream); }
+    .blog-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 3rem; }
+    .blog-card { background: white; border: 1px solid #E0D5CA; overflow: hidden; transition: all 0.3s; cursor: pointer; }
+    .blog-card:hover { transform: translateY(-4px); box-shadow: 0 10px 30px rgba(27, 58, 46, 0.1); }
+    .blog-image { width: 100%; height: 200px; overflow: hidden; }
+    .blog-image img { width: 100%; height: 100%; object-fit: cover; }
+    .blog-content { padding: 1.5rem; }
+    .blog-category { font-size: 0.75rem; text-transform: uppercase; color: var(--green-deep); font-weight: 700; margin-bottom: 0.5rem; }
+    .blog-title { font-weight: 700; margin-bottom: 0.8rem; font-size: 1.05rem; }
+    .blog-desc { font-size: 0.9rem; color: #666; line-height: 1.6; }
+
+    /* FAQ */
+    #faq { padding: 6rem 5%; background: white; }
+    .faq-list { max-width: 800px; margin: 3rem auto 0; }
+    .faq-item { margin-bottom: 2rem; border-bottom: 1px solid #E0D5CA; padding-bottom: 2rem; }
+    .faq-question { font-weight: 700; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+    .faq-answer { display: none; margin-top: 1rem; font-size: 0.95rem; color: #666; line-height: 1.7; }
+    .faq-item.open .faq-answer { display: block; }
+
+    /* CTA */
+    #cta { padding: 8rem 5%; background: var(--ink); color: white; text-align: center; }
+    #cta h2 { color: white; margin-bottom: 1.5rem; }
+    #cta p { font-size: 1.05rem; color: #CCC; max-width: 600px; margin: 0 auto 2.5rem; }
+    .btn-cta { background: var(--green-deep); color: white; padding: 1.2rem 3rem; font-weight: 700; cursor: pointer; }
+
+    footer { background: var(--ink); color: white; padding: 4rem 5%; text-align: center; font-size: 0.9rem; opacity: 0.7; }
+
+    @media (max-width: 1024px) { .design-wrapper { grid-template-columns: 1fr; } }
+    @media (max-width: 768px) { .hero-grid { grid-template-columns: 1fr; } .nav-links { display: none; } }
+  </style>
+</head>
+<body>
+
+<div class="urgency-bar">🔥 Quedan <span id="stock">47</span> unidades • Envío gratis hoy</div>
+
+<header>
+  <nav>
+    <div class="logo">nekko.</div>
+    <div class="nav-links">
+      <a onclick="document.getElementById('hero').scrollIntoView({behavior:'smooth'})">Inicio</a>
+      <a onclick="document.getElementById('collection').scrollIntoView({behavior:'smooth'})">Colección</a>
+      <a onclick="document.getElementById('blog').scrollIntoView({behavior:'smooth'})">Blog</a>
+    </div>
+    <button class="btn-cart">Carrito (0)</button>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div class="hero-content">
+        <h1>Eres el arquitecto.<br>Nosotros ponemos<br>las piezas.</h1>
+        <p style="font-size: 1.1rem; color: var(--green-deep); margin-bottom: 2rem; font-style: italic;">Diseña arquitecturas verticales para tu gato.</p>
+        <p>Módulos de madera certificada FSC. Sin compromisos en diseño ni sostenibilidad.</p>
+        <div class="hero-cta">
+          <button class="btn-primary" onclick="document.getElementById('collection').scrollIntoView({behavior:'smooth'})">Ver colección →</button>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <img src="inspo_7.png" alt="Arquitectura Nekko">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COLLECTION -->
+<section id="collection">
+  <div class="container">
+    <div class="section-label">Colección completa</div>
+    <h2>Nuestros módulos</h2>
+    <div class="collection-grid">
+      <div class="product-card" onclick="openModal('p1')">
+        <div class="product-badge">TOP SELLER</div>
+        <div class="product-image"><img src="prod_escalera.png" alt="Escalera Modular"></div>
+        <div class="product-content">
+          <div class="product-name">Escalera Modular</div>
+          <div class="product-rating"><span class="stars">★★★★★</span> <span>4.9 (28)</span></div>
+          <div style="font-size: 0.85rem; color: #888; margin-bottom: 1rem;">4 peldaños • Sisal • 40×20cm</div>
+          <div class="product-price">89€</div>
+          <button class="btn-add-product">Añadir</button>
+        </div>
+      </div>
+
+      <div class="product-card" onclick="openModal('p2')">
+        <div class="product-badge">TOP SELLER</div>
+        <div class="product-image"><img src="prod_hamaca.png" alt="Hamaca Flotante"></div>
+        <div class="product-content">
+          <div class="product-name">Hamaca Flotante</div>
+          <div class="product-rating"><span class="stars">★★★★★</span> <span>4.9 (35)</span></div>
+          <div style="font-size: 0.85rem; color: #888; margin-bottom: 1rem;">Lona • 48×30cm</div>
+          <div class="product-price">79€</div>
+          <button class="btn-add-product">Añadir</button>
+        </div>
+      </div>
+
+      <div class="product-card" onclick="openModal('p3')">
+        <div class="product-badge">TOP SELLER</div>
+        <div class="product-image"><img src="prod_formagato.png" alt="Hamaca Forma Gato"></div>
+        <div class="product-content">
+          <div class="product-name">Hamaca Forma Gato</div>
+          <div class="product-rating"><span class="stars">★★★★★</span> <span>4.8 (42)</span></div>
+          <div style="font-size: 0.85rem; color: #888; margin-bottom: 1rem;">Forma gato • Ergonómica</div>
+          <div class="product-price">49€</div>
+          <button class="btn-add-product">Añadir</button>
+        </div>
+      </div>
+
+      <div class="product-card" onclick="openModal('p4')">
+        <div class="product-image"><img src="prod_estante.png" alt="Estante Minimalista"></div>
+        <div class="product-content">
+          <div class="product-name">Estante Minimalista</div>
+          <div class="product-rating"><span class="stars">★★★★★</span> <span>4.7 (18)</span></div>
+          <div style="font-size: 0.85rem; color: #888; margin-bottom: 1rem;">38×25cm • Madera</div>
+          <div class="product-price">59€</div>
+          <button class="btn-add-product">Añadir</button>
+        </div>
+      </div>
+
+      <div class="product-card" onclick="openModal('p5')">
+        <div class="product-image"><img src="prod_esquina.png" alt="Esquina Premium"></div>
+        <div class="product-content">
+          <div class="product-name">Esquina Premium</div>
+          <div class="product-rating"><span class="stars">★★★★★</span> <span>4.9 (22)</span></div>
+          <div style="font-size: 0.85rem; color: #888; margin-bottom: 1rem;">Ø 31.5cm • Madera</div>
+          <div class="product-price">75€</div>
+          <button class="btn-add-product">Añadir</button>
+        </div>
+      </div>
+
+      <div class="product-card" onclick="openModal('p6')">
+        <div class="product-image"><img src="prod_rascador77.png" alt="Rascador Vertical 77cm"></div>
+        <div class="product-content">
+          <div class="product-name">Rascador Vertical 77cm</div>
+          <div class="product-rating"><span class="stars">★★★★★</span> <span>4.8 (15)</span></div>
+          <div style="font-size: 0.85rem; color: #888; margin-bottom: 1rem;">77cm • Sisal premium</div>
+          <div class="product-price">89€</div>
+          <button class="btn-add-product">Añadir</button>
+        </div>
+      </div>
+
+      <div class="product-card" onclick="openModal('p7')">
+        <div class="product-image"><img src="prod_rascador_doble.png" alt="Doble Rascador"></div>
+        <div class="product-content">
+          <div class="product-name">Doble Rascador Horizontal</div>
+          <div class="product-rating"><span class="stars">★★★★★</span> <span>4.8 (19)</span></div>
+          <div style="font-size: 0.85rem; color: #888; margin-bottom: 1rem;">2 rascadores • 21.7cm • Sisal</div>
+          <div class="product-price">65€</div>
+          <button class="btn-add-product">Añadir</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BLOG -->
+<section id="blog">
+  <div class="container">
+    <div class="section-label">Guías y recursos</div>
+    <h2>Enriquecimiento felino</h2>
+    <div class="blog-grid">
+      <div class="blog-card" onclick="alert('Artículo: Guía completa para diseñar tu muro vertical')">
+        <div class="blog-image"><img src="inspo_4.png" alt="Diseño arquitectura gatos"></div>
+        <div class="blog-content">
+          <div class="blog-category">Diseño</div>
+          <div class="blog-title">Guía: Diseña tu muro vertical</div>
+          <div class="blog-desc">Consejos profesionales para crear la arquitectura perfecta en tu hogar. Desde medidas hasta iluminación.</div>
+        </div>
+      </div>
+
+      <div class="blog-card" onclick="alert('Artículo: Enriquecimiento ambiental para gatos')">
+        <div class="blog-image"><img src="inspo_5.png" alt="Comportamiento felino"></div>
+        <div class="blog-content">
+          <div class="blog-category">Comportamiento</div>
+          <div class="blog-title">Enriquecimiento ambiental</div>
+          <div class="blog-desc">Por qué los espacios verticales son esenciales para la salud mental y física de tu gato.</div>
+        </div>
+      </div>
+
+      <div class="blog-card" onclick="alert('Artículo: Sostenibilidad en muebles para gatos')">
+        <div class="blog-image"><img src="inspo_1.png" alt="Sostenibilidad Nekko"></div>
+        <div class="blog-content">
+          <div class="blog-category">Sostenibilidad</div>
+          <div class="blog-title">Muebles gato responsables</div>
+          <div class="blog-desc">Cómo elegir productos sostenibles sin sacrificar diseño o calidad. Impacto ambiental real.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INSPIRATION -->
+<section style="padding: 6rem 5%; background: var(--cream);">
+  <div class="container">
+    <div class="section-label">Inspiración</div>
+    <h2>Espacios reales. Arquitecturas únicas.</h2>
+    <p style="font-size:0.95rem;color:#666;margin-top:1rem;margin-bottom:3rem;">Cada hogar es diferente. Cada arquitectura también.</p>
+
+    <!-- FOTO GRANDE -->
+    <div style="width:100%;aspect-ratio:16/7;overflow:hidden;margin-bottom:1.5rem;">
+      <img src="inspo_1.png" alt="Arquitectura Nekko salón" style="width:100%;height:100%;object-fit:cover;">
+    </div>
+
+    <!-- DOS FOTOS MEDIANAS -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem;">
+      <div style="aspect-ratio:4/3;overflow:hidden;">
+        <img src="inspo_4.png" alt="Arquitectura Nekko apartamento" style="width:100%;height:100%;object-fit:cover;">
+      </div>
+      <div style="aspect-ratio:4/3;overflow:hidden;">
+        <img src="inspo_7.png" alt="Arquitectura Nekko luz dorada" style="width:100%;height:100%;object-fit:cover;">
+      </div>
+    </div>
+
+    <!-- DOS FOTOS PEQUEÑAS -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+      <div style="aspect-ratio:4/3;overflow:hidden;">
+        <img src="inspo_5.png" alt="Arquitectura Nekko minimalista" style="width:100%;height:100%;object-fit:cover;">
+      </div>
+      <div style="aspect-ratio:4/3;overflow:hidden;">
+        <img src="inspo_9.png" alt="Arquitectura Nekko dormitorio" style="width:100%;height:100%;object-fit:cover;">
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:3rem;">
+      <button class="btn-primary" onclick="document.getElementById('collection').scrollIntoView({behavior:'smooth'})">Diseña el tuyo →</button>
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section style="padding: 6rem 5%; background: white;">
+  <div class="container">
+    <div class="section-label">Reseñas verificadas</div>
+    <h2>Lo que dicen los dueños</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; margin-top: 3rem;">
+      <div style="background: var(--cream); padding: 2rem; border-left: 3px solid var(--green-deep);">
+        <div style="color: var(--accent); margin-bottom: 1rem;">★★★★★</div>
+        <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1rem;">
+          <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--green-soft); border: 2px solid var(--green-deep); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0;">🐱</div>
+          <div><strong>Andrea P.</strong><br><span style="font-size:0.85rem;color:#999;">Gino y Tina</span></div>
+        </div>
+        <p style="font-size: 0.95rem; color: #666; font-style: italic; line-height: 1.8;">"Mejor compra que he hecho para mis gatos. La calidad es excepcional, el diseño es precioso y mis gatos lo aman."</p>
+      </div>
+      <div style="background: var(--cream); padding: 2rem; border-left: 3px solid var(--green-deep);">
+        <div style="color: var(--accent); margin-bottom: 1rem;">★★★★★</div>
+        <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1rem;">
+          <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--green-soft); border: 2px solid var(--green-deep); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0;">😸</div>
+          <div><strong>Javier M.</strong><br><span style="font-size:0.85rem;color:#999;">Max</span></div>
+        </div>
+        <p style="font-size: 0.95rem; color: #666; font-style: italic; line-height: 1.8;">"El acabado es impresionante. Parece un mueble para mi casa, no una cosa para gatos. Totalmente recomendado."</p>
+      </div>
+      <div style="background: var(--cream); padding: 2rem; border-left: 3px solid var(--green-deep);">
+        <div style="color: var(--accent); margin-bottom: 1rem;">★★★★★</div>
+        <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1rem;">
+          <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--green-soft); border: 2px solid var(--green-deep); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0;">🐈</div>
+          <div><strong>Lucia G.</strong><br><span style="font-size:0.85rem;color:#999;">Luna</span></div>
+        </div>
+        <p style="font-size: 0.95rem; color: #666; font-style: italic; line-height: 1.8;">"La modularidad es real. Empecé con 2 módulos y ahora tengo 5. Crece con mi gato y con mi espacio."</p>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; padding: 1.2rem 1.5rem; background: rgba(200,96,42,0.08); margin: 2rem 0; border: 1px solid rgba(200,96,42,0.2);">
+      <span style="font-size:0.85rem;font-weight:600;color:var(--terra);">✓ Pago 100% seguro (SSL)</span>
+      <span style="font-size:0.85rem;font-weight:600;color:var(--terra);">✓ 30 días devolución</span>
+      <span style="font-size:0.85rem;font-weight:600;color:var(--terra);">✓ Envío 24-48h</span>
+      <span style="font-size:0.85rem;font-weight:600;color:var(--terra);">✓ Garantía sin preguntas</span>
+    </div>
+    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center;">
+      <span style="background:white;border:1px solid #E0D5CA;padding:0.3rem 0.8rem;font-size:0.75rem;font-weight:700;">Visa</span>
+      <span style="background:white;border:1px solid #E0D5CA;padding:0.3rem 0.8rem;font-size:0.75rem;font-weight:700;">Mastercard</span>
+      <span style="background:white;border:1px solid #E0D5CA;padding:0.3rem 0.8rem;font-size:0.75rem;font-weight:700;">PayPal</span>
+      <span style="background:white;border:1px solid #E0D5CA;padding:0.3rem 0.8rem;font-size:0.75rem;font-weight:700;">Transferencia</span>
+    </div>
+  </div>
+</section>
+
+<!-- SUSTAINABILITY -->
+<section style="padding: 6rem 5%; background: var(--cream);">
+  <div class="container">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;">
+      <div>
+        <div class="section-label">Responsabilidad</div>
+        <h2>Sostenibilidad sin compromisos</h2>
+        <p style="font-size:0.95rem;color:#666;margin-bottom:1.5rem;">Cada módulo es construcción responsable. Madera certificada FSC. Sisal y telas de proveedores éticos.</p>
+        <div style="display:flex;flex-direction:column;gap:1.5rem;margin-top:2rem;">
+          <div style="display:flex;gap:1rem;"><span style="font-size:1.5rem;flex-shrink:0;">🌲</span><div><strong style="display:block;margin-bottom:0.3rem;">Madera Certificada FSC</strong><span style="font-size:0.9rem;color:#666;">Bosques gestionados responsablemente. Trazabilidad completa.</span></div></div>
+          <div style="display:flex;gap:1rem;"><span style="font-size:1.5rem;flex-shrink:0;">♻️</span><div><strong style="display:block;margin-bottom:0.3rem;">Cero Desperdicios</strong><span style="font-size:0.9rem;color:#666;">Residuos reciclados. Nada se pierde en producción.</span></div></div>
+          <div style="display:flex;gap:1rem;"><span style="font-size:1.5rem;flex-shrink:0;">📦</span><div><strong style="display:block;margin-bottom:0.3rem;">Packaging Reciclable</strong><span style="font-size:0.9rem;color:#666;">Cartón y papel. Envíos optimizados.</span></div></div>
+          <div style="display:flex;gap:1rem;"><span style="font-size:1.5rem;flex-shrink:0;">✋</span><div><strong style="display:block;margin-bottom:0.3rem;">Producción Ética</strong><span style="font-size:0.9rem;color:#666;">Condiciones laborales justas. Transparencia total.</span></div></div>
+        </div>
+      </div>
+      <div style="width:100%;aspect-ratio:1;background:linear-gradient(135deg,var(--green-soft),white);display:flex;align-items:center;justify-content:center;font-size:6rem;">🌿</div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="container">
+    <div class="section-label">Dudas frecuentes</div>
+    <h2>Preguntas y respuestas</h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <div class="faq-question" onclick="this.parentElement.classList.toggle('open')"><span>¿Es difícil montar?</span><span>+</span></div>
+        <div class="faq-answer">No. Cada módulo viene con instrucciones claras. Solo necesitas taladro y 20-30 minutos. Si tienes dudas, respondemos en WhatsApp en menos de 2 horas.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="this.parentElement.classList.toggle('open')"><span>¿Qué tipo de madera?</span><span>+</span></div>
+        <div class="faq-answer">Madera maciza certificada FSC. Pino y abedul. Resistente, ligera y eco-responsable. Sin tóxicos para gatos.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="this.parentElement.classList.toggle('open')"><span>¿Cuánto peso aguanta?</span><span>+</span></div>
+        <div class="faq-answer">Los estantes aguantan hasta 20kg. Más que suficiente. Todos testeados con gatos de 6-7kg sin problemas.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="this.parentElement.classList.toggle('open')"><span>¿Devoluciones?</span><span>+</span></div>
+        <div class="faq-answer">30 días sin preguntas. Si no estás satisfecho, devolvemos el 100%. Simplemente avísanos.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="container">
+    <h2>Diseña tu arquitectura</h2>
+    <p>Tu gato merece un espacio tan único como él.</p>
+    <button class="btn-cta" onclick="document.getElementById('design-tool').scrollIntoView({behavior:'smooth'})">Comenzar →</button>
+  </div>
+</section>
+
+<!-- PRODUCT MODAL -->
+<div class="modal-overlay" id="productModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-grid">
+      <div class="modal-gallery">
+        <img class="modal-main-img" id="modalMainImg" src="" alt="">
+        <div class="modal-thumbs" id="modalThumbs"></div>
+      </div>
+      <div class="modal-info">
+        <div class="modal-label" id="modalLabel"></div>
+        <div class="modal-title" id="modalTitle"></div>
+        <div class="modal-rating"><span style="color:var(--accent)">★★★★★</span> <span id="modalRating"></span></div>
+        <div class="modal-price" id="modalPrice"></div>
+        <div class="modal-desc" id="modalDesc"></div>
+        <div class="modal-features" id="modalFeatures"></div>
+        <div class="modal-specs">
+          <div class="modal-specs-title">Especificaciones</div>
+          <div id="modalSpecs"></div>
+        </div>
+        <div class="modal-trust">
+          <div class="modal-trust-item">⚖️ Testado hasta 20kg</div>
+          <div class="modal-trust-item">↩ 30 días devolución</div>
+          <div class="modal-trust-item">🚚 Envío 24-48h</div>
+        </div>
+        <button class="btn-modal-buy">Añadir al carrito</button>
+      </div>
+    </div>
+    <div class="modal-combina">
+      <div class="modal-combina-title">Combina con</div>
+      <div class="modal-combina-grid" id="modalCombina"></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>© 2025 Nekko. Arquitectura vertical para felinos.</p>
+</footer>
+
+<script>
+const canvas = document.getElementById('designCanvas');
+const ctx = canvas ? canvas.getContext('2d') : null;
+const modules = {
+  e1: { name: 'Escalera', price: 89, emoji: '🪜', w: 100, h: 120 },
+  e2: { name: 'Hamaca', price: 79, emoji: '🛏️', w: 120, h: 60 },
+  e3: { name: 'Plataforma', price: 69, emoji: '⭕', w: 110, h: 110 },
+  e4: { name: 'Estante', price: 59, emoji: '📦', w: 130, h: 50 },
+  e5: { name: 'Forma Gato', price: 49, emoji: '🐱', w: 90, h: 70 },
+  e6: { name: 'Rascador', price: 45, emoji: '🎯', w: 80, h: 100 }
+};
+let designed = [];
+
+function resizeCanvas() {
+  if(!canvas) return;
+  canvas.width = canvas.parentElement.offsetWidth;
+  canvas.height = canvas.parentElement.offsetHeight;
+  redrawCanvas();
+}
+
+function redrawCanvas() {
+  ctx.fillStyle = '#E8DFD0';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.strokeStyle = 'rgba(0,0,0,0.02)';
+  for(let i = 0; i < canvas.width; i += 50) {
+    ctx.beginPath();
+    ctx.moveTo(i, 0);
+    ctx.lineTo(i, canvas.height);
+    ctx.stroke();
+  }
+
+  designed.forEach((item) => {
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+    ctx.strokeStyle = '#8B6F47';
+    ctx.lineWidth = 1;
+    ctx.fillRect(item.x, item.y, item.w, item.h);
+    ctx.strokeRect(item.x, item.y, item.w, item.h);
+    ctx.font = `${item.h * 0.5}px Arial`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(modules[item.type].emoji, item.x + item.w/2, item.y + item.h/2);
+  });
+}
+
+document.querySelectorAll('.module-drag').forEach(item => {
+  item.addEventListener('dragstart', (e) => {
+    e.dataTransfer.effectAllowed = 'copy';
+    e.dataTransfer.setData('type', e.currentTarget.dataset.module);
+  });
+});
+
+if(canvas) {
+  canvas.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+  });
+
+  canvas.addEventListener('drop', (e) => {
+    e.preventDefault();
+    const type = e.dataTransfer.getData('type');
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left - modules[type].w / 2;
+    const y = e.clientY - rect.top - modules[type].h / 2;
+    designed.push({
+      type: type,
+      x: Math.max(0, Math.min(x, canvas.width - modules[type].w)),
+      y: Math.max(0, Math.min(y, canvas.height - modules[type].h)),
+      w: modules[type].w,
+      h: modules[type].h
+    });
+    updateSummary();
+    redrawCanvas();
+  });
+
+  canvas.addEventListener('click', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    for(let i = designed.length - 1; i >= 0; i--) {
+      if(x > designed[i].x && x < designed[i].x + designed[i].w && y > designed[i].y && y < designed[i].y + designed[i].h) {
+        designed.splice(i, 1);
+        updateSummary();
+        redrawCanvas();
+        break;
+      }
+    }
+  });
+}
+
+function updateSummary() {
+  const items = {};
+  let total = 0;
+  designed.forEach(item => {
+    if(!items[item.type]) items[item.type] = { name: modules[item.type].name, price: modules[item.type].price, count: 0 };
+    items[item.type].count++;
+    total += modules[item.type].price;
+  });
+  const html = designed.length === 0 ? '<div class="summary-empty">Arrastra módulos aquí</div>' : Object.keys(items).map(k => `<div class="summary-item"><span>${items[k].name} ${items[k].count > 1 ? '×' + items[k].count : ''}</span><span>${items[k].price * items[k].count}€</span></div>`).join('');
+  document.getElementById('summaryItems').innerHTML = html;
+  document.getElementById('totalPrice').textContent = total + '€';
+}
+
+window.saveDesign = () => alert(designed.length === 0 ? '¡Diseña primero!' : '✓ Diseño guardado!');
+window.clearDesign = () => { designed = []; updateSummary(); redrawCanvas(); };
+window.addToCart = () => alert(designed.length === 0 ? '¡Diseña primero!' : '✓ ' + designed.length + ' producto(s) en carrito!');
+
+// PRODUCT DATA
+const productData = {
+  p1: {
+    label: 'Escalada vertical',
+    title: 'Escalera Modular',
+    rating: '4.9 (28 reseñas)',
+    price: '89€',
+    imgs: ['prod_escalera.png', 'estanteria_escalera_gato.png'],
+    desc: 'La escalera modular es el punto de partida de cualquier arquitectura vertical. Diseñada para que tu gato trepe de forma natural, con peldaños en sisal que protegen sus uñas y antideslizantes.',
+    features: ['4 peldaños en sisal natural', 'Madera certificada FSC', 'Instalación en pared en 20 min', 'Aguanta hasta 20kg', 'Incluye tornillería'],
+    specs: [['Dimensiones', '40 × 20 cm'], ['Altura total', '40 cm'], ['Material', 'Madera pino + sisal'], ['Peso máximo', '20 kg'], ['Instalación', 'Anclaje pared']],
+    combina: ['p2','p3','p5']
+  },
+  p2: {
+    label: 'Descanso elevado',
+    title: 'Hamaca Flotante',
+    rating: '4.9 (35 reseñas)',
+    price: '79€',
+    imgs: ['prod_hamaca.png', 'estante_flotante_nekko_amaca.png'],
+    desc: 'La hamaca flotante es el refugio definitivo. Lona transpirable que se adapta al peso del gato, soportada por dos brazos de madera curvada. Perfecta para descansos prolongados al sol.',
+    features: ['Lona 100% natural transpirable', 'Brazos de madera curvada', 'Instalación en 15 min', 'Aguanta hasta 15kg', 'Lavable a máquina'],
+    specs: [['Dimensiones', '48 × 30 cm'], ['Altura', '10 cm'], ['Material', 'Madera + lona natural'], ['Peso máximo', '15 kg'], ['Instalación', 'Anclaje pared']],
+    combina: ['p1','p3','p4']
+  },
+  p3: {
+    label: 'Forma icónica',
+    title: 'Hamaca Forma Gato',
+    rating: '4.8 (42 reseñas)',
+    price: '49€',
+    imgs: ['prod_formagato.png', 'estanteria_forma_gato.png'],
+    desc: 'El módulo más icónico de Nekko. Silueta de gato tallada en madera maciza. Funcional y decorativo a la vez: tus visitas lo notarán antes que tu gato.',
+    features: ['Silueta gato tallada en madera', 'Superficie antideslizante', 'Instalación directa pared', 'Muy ligera y fácil de montar', 'Madera certificada FSC'],
+    specs: [['Dimensiones', '19.3 × 9 cm'], ['Material', 'Madera maciza'], ['Peso máximo', '8 kg'], ['Instalación', 'Anclaje pared']],
+    combina: ['p1','p2','p6']
+  },
+  p4: {
+    label: 'Minimalismo puro',
+    title: 'Estante Minimalista',
+    rating: '4.7 (18 reseñas)',
+    price: '59€',
+    imgs: ['prod_estante.png', 'estante_nekko_type_8.png'],
+    desc: 'El bloque esencial. Estante de madera maciza sin adornos. La pieza más versátil del sistema: úsala como base, como punto intermedio o como mirador. Combina con todo.',
+    features: ['Diseño minimalista nórdico', 'Madera maciza sin tratamientos tóxicos', 'Superficie lisa antideslizante', 'Instalación en 10 min', 'Peso máximo 20kg'],
+    specs: [['Dimensiones', '38 × 25 cm'], ['Altura', '16.5 cm'], ['Material', 'Madera pino macizo'], ['Peso máximo', '20 kg'], ['Instalación', 'Anclaje pared']],
+    combina: ['p1','p2','p5']
+  },
+  p5: {
+    label: 'Esquina perfecta',
+    title: 'Esquina Premium',
+    rating: '4.9 (22 reseñas)',
+    price: '75€',
+    imgs: ['prod_esquina.png', 'esquina_circular_nekko.png'],
+    desc: 'Transforma cualquier esquina vacía en parte de la arquitectura. La esquina circular es la única pieza del catálogo diseñada específicamente para esquinas de 90°. Aprovecha el espacio muerto.',
+    features: ['Diseñada para esquinas 90°', 'Superficie circular curvada', 'Madera maciza reforzada', 'Patas de separación de pared integradas', 'Aguanta hasta 20kg'],
+    specs: [['Diámetro', 'Ø 31.5 cm'], ['Profundidad', '15.5 cm'], ['Material', 'Madera pino macizo'], ['Peso máximo', '20 kg'], ['Instalación', 'Anclaje esquina']],
+    combina: ['p1','p6','p7']
+  },
+  p6: {
+    label: 'Rascador premium',
+    title: 'Rascador Vertical 77cm',
+    rating: '4.8 (15 reseñas)',
+    price: '89€',
+    imgs: ['prod_rascador77.png', 'rascador_neko_77cm.png'],
+    desc: 'El rascador más completo del catálogo. 77cm de altura con plataforma superior y sisal de alta densidad que aguanta años de uso intensivo. Instalado en pared: ocupa cero espacio en suelo.',
+    features: ['77cm de sisal de alta densidad', 'Plataforma de descanso superior', 'Instalación vertical en pared', 'Sisal 100% natural', 'Aguanta años de uso intensivo'],
+    specs: [['Altura total', '77 cm'], ['Altura sisal', '37.5 cm'], ['Diámetro', '22.5 cm'], ['Material', 'Madera + sisal natural'], ['Instalación', 'Anclaje pared']],
+    combina: ['p1','p2','p4']
+  },
+  p7: {
+    label: 'Doble diversión',
+    title: 'Doble Rascador Horizontal',
+    rating: '4.8 (19 reseñas)',
+    price: '65€',
+    imgs: ['prod_rascador_doble.png', 'doble_rascador_nekko_horizontal.png'],
+    desc: 'Dos rascadores en un solo módulo. Diseñado para hogares con más de un gato o para gatos que necesitan más superficie de rascado. Compacto, horizontal y fácil de instalar.',
+    features: ['2 rascadores integrados', 'Sisal natural alta densidad', 'Diseño horizontal compacto', 'Instalación directa en pared', 'Ideal para múltiples gatos'],
+    specs: [['Longitud', '21.7 cm'], ['Diámetro', '6.5 cm'], ['Material', 'Madera + sisal natural'], ['Peso máximo', '10 kg'], ['Instalación', 'Anclaje pared']],
+    combina: ['p1','p5','p6']
+  }
+};
+
+const allProducts = [
+  { id:'p1', name:'Escalera', price:'89€', img:'prod_escalera.png' },
+  { id:'p2', name:'Hamaca', price:'79€', img:'prod_hamaca.png' },
+  { id:'p3', name:'Forma Gato', price:'49€', img:'prod_formagato.png' },
+  { id:'p4', name:'Estante', price:'59€', img:'prod_estante.png' },
+  { id:'p5', name:'Esquina', price:'75€', img:'prod_esquina.png' },
+  { id:'p6', name:'Rascador 77', price:'89€', img:'prod_rascador77.png' },
+  { id:'p7', name:'Doble Rascador', price:'65€', img:'prod_rascador_doble.png' }
+];
+
+function openModal(id) {
+  const p = productData[id];
+  document.getElementById('modalLabel').textContent = p.label;
+  document.getElementById('modalTitle').textContent = p.title;
+  document.getElementById('modalRating').textContent = p.rating;
+  document.getElementById('modalPrice').textContent = p.price;
+  document.getElementById('modalDesc').textContent = p.desc;
+  document.getElementById('modalMainImg').src = p.imgs[0];
+  document.getElementById('modalFeatures').innerHTML = p.features.map(f => `<div class="modal-feature">${f}</div>`).join('');
+  document.getElementById('modalSpecs').innerHTML = p.specs.map(s => `<div class="modal-spec-row"><span>${s[0]}</span><span><strong>${s[1]}</strong></span></div>`).join('');
+  const thumbs = document.getElementById('modalThumbs');
+  thumbs.innerHTML = p.imgs.map((img, i) => `<img src="${img}" class="modal-thumb ${i===0?'active':''}" onclick="switchImg(this,'${img}')">`).join('');
+  const combina = document.getElementById('modalCombina');
+  combina.innerHTML = p.combina.map(cid => {
+    const cp = allProducts.find(x => x.id === cid);
+    return `<div class="modal-combina-item" onclick="openModal('${cid}')"><img src="${cp.img}" alt="${cp.name}"><span>${cp.name}</span><em>${cp.price}</em></div>`;
+  }).join('');
+  document.getElementById('productModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function switchImg(el, src) {
+  document.getElementById('modalMainImg').src = src;
+  document.querySelectorAll('.modal-thumb').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function closeModal() {
+  document.getElementById('productModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('productModal').addEventListener('click', function(e) {
+  if(e.target === this) closeModal();
+});
+
+document.querySelectorAll('.btn-add-product').forEach(btn => {
+  btn.addEventListener('click', () => {
+    btn.textContent = '✓';
+    btn.style.background = 'var(--green-deep)';
+    setTimeout(() => { btn.textContent = 'Añadir'; btn.style.background = 'var(--ink)'; }, 1500);
+  });
+});
+
+setInterval(() => {
+  let count = parseInt(document.getElementById('stock').textContent);
+  if(count > 5) {
+    count = Math.max(5, count - Math.floor(Math.random() * 2));
+    document.getElementById('stock').textContent = count;
+  }
+}, 20000);
+</script>
+
+</body>
+</html>
